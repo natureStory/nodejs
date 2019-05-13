@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://v4.bootcss.com/assets/css/docs.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./page/index.css">
+</head>
+<body>
+
+<!-- Menu -->
+<nav class="navbar navbar-default navbar-fixed-top navbar-orange" style="background-image: linear-gradient(160deg, #b100ff 20%,#00b3ff 80%);">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu" aria-expanded="false">
+                <i class="fa fa-bars"></i>
+            </button>
+            <a class="navbar-brand"><img src="https://d33wubrfki0l68.cloudfront.net/67a4995f0d6ce4e69f8ca496de0ee0d2832e9385/29a04/assets/img/logo_rocket.png" height="35" alt="Propulso"><img src="https://d33wubrfki0l68.cloudfront.net/ae259063c171baba491308b7cb6ceacef91db0bd/6df5c/assets/img/logo_name.png" class="hidden-sm" height="30" alt="Propulso"></a>
+        </div>
+        <div class="collapse navbar-collapse" id="main-menu">
+            <ul class="nav navbar-nav">
+                <li><a href="#" onclick="goTo('#features'); ga('send', 'event', 'Menu', 'click', 'Features');">Features</a></li>
+                <li><a href="#" onclick="goTo('#price'); ga('send', 'event', 'Menu', 'click', 'Price');">Pricing</a></li>
+                <li class="hidden-sm"><a href="/en/faq">FAQ</a></li>
+                <li><a href="#" onclick="goTo('#footer'); ga('send', 'event', 'Menu', 'click', 'Contact');">Contact</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/fr"><i class="fa fa-globe"></i> FR</a></li>
+                <li><a href="https://app.propulso.io"><i class="fa fa-lock"></i> Log In</a></li>
+                <li><a data-toggle="modal" data-target="#modal-subscription" class="btn-menu" onclick="ga('send', 'event', 'Subscribe', 'click', 'Top menu');">Sign Up</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="form-group" style="margin: 50px; margin-bottom: 0;">
+    <label for="addtodolist">键入新的代办事项：</label>
+    <input type="email" class="form-control" id="addtodolist" placeholder="add new todolist">
+</div>
+
+<div class="content">
+
+</div>
+
+
+<script>
+    (function() {
+        document.getElementById('addtodolist').addEventListener('keydown', function (e) {
+            const content = document.getElementById('addtodolist').value;
+            if (!content) {
+                return;
+            }
+            if (e.keyCode === 13) {
+                let name = localStorage.getItem('name');
+                if (!name) {
+                    var newName=prompt("请定义一个名字吧","");
+                    if (newName!=null && newName!="")
+                    {
+                        localStorage.setItem('name', newName);
+                    }
+                }
+                name = localStorage.getItem('name');
+                // todo: 发送请求
+                fetch('/api/todo', {method: 'POST', body: JSON.stringify({name, content})})
+                    .then(data => data.json())
+                    .then(data => {
+                        document.getElementById('addtodolist').value = '';
+                    })
+                    .catch(e => console.log(e));
+            }
+        })
+    })();
+</script>
+</body>
+</html>

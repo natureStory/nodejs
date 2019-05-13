@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+详情
+<script>
+    fetch('/api/list', {method: 'POST'}).then(data => data.json()).then(data => console.log(data)).catch(e => console.log(e));
+    fetch('/api/list', {method: 'GET'}).then(data => data.json()).then(data => console.log(data)).catch(e => console.log(e));
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+html, body {
+    height: 100%;
+    background: #F5F5F5;
+}
+body {
+    display: flex;
+    flex-direction: column;
+}
+.content {
+    display: flex;
+    flex: 1;
+    margin: 50px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: -1px 3px 5px 0 rgba(0,0,0,.1);
+}

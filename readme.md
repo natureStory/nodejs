@@ -4,7 +4,6 @@
 1. createHash生成md5之类的，输入一样，生成结果一样
 1. createHmac生成的哈希算法，需要一个秘钥，输入和秘钥都相同才会相同
 1. aes生成可以解密的字符串
-1. 
 
 #### day 001
 1. [exports与module.exports区别](https://www.cnblogs.com/fayin/p/6831071.html)
