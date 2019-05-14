@@ -7,7 +7,7 @@ body {
     flex-direction: column;
 }
 .content {
-    display: flex;
+    /*display: flex;*/
     flex: 1;
     margin: 50px;
     background: #fff;

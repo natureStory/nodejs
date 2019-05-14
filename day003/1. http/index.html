@@ -39,12 +39,36 @@
     <input type="email" class="form-control" id="addtodolist" placeholder="add new todolist">
 </div>
 
-<div class="content">
+<div class="content" id="content">
 
 </div>
 
 
 <script>
+    // 获取列表
+    function getList() {
+        let name = localStorage.getItem('name');
+        if (!name) {
+            var newName=prompt("无名氏大侠？请起一个响当当的名字吧","");
+            if (newName!=null && newName!="")
+            {
+                localStorage.setItem('name', newName);
+            }
+        }
+        name = localStorage.getItem('name');
+        fetch('/api/list?name='+name, {method: 'GET'})
+            .then(data => data.json())
+            .then(data => {
+                console.log(data);
+                let template = '<div>你好</div>';
+                data.forEach(item => {
+                    template += `<div>你好</div>`;
+                });
+                document.getElementById('content').innerHTML = template;
+            })
+            .catch(e => console.log(e));
+    }
+    // 添加todo
     (function() {
         document.getElementById('addtodolist').addEventListener('keydown', function (e) {
             const content = document.getElementById('addtodolist').value;
@@ -53,24 +77,18 @@
             }
             if (e.keyCode === 13) {
                 let name = localStorage.getItem('name');
-                if (!name) {
-                    var newName=prompt("请定义一个名字吧","");
-                    if (newName!=null && newName!="")
-                    {
-                        localStorage.setItem('name', newName);
-                    }
-                }
-                name = localStorage.getItem('name');
                 // todo: 发送请求
                 fetch('/api/todo', {method: 'POST', body: JSON.stringify({name, content})})
                     .then(data => data.json())
                     .then(data => {
                         document.getElementById('addtodolist').value = '';
+                        getList();
                     })
                     .catch(e => console.log(e));
             }
         })
     })();
+    getList();
 </script>
 </body>
 </html>

@@ -3,16 +3,15 @@ var url = require('url');
 var path = require('path');
 var fs = require('fs');
 
+var router = require('./router');
+
 var root = path.resolve(process.argv[2] || '.');
 http.createServer(function (request, response) {
     var pathname = url.parse(request.url).pathname;
     var filepath = path.join(root, pathname);
     if(/api/.test(pathname)) {
         // 请求
-        console.log(request.method);
-        response.writeHead(200, 'text/json');
-        response.end('{"abc": "nihao", "no": 123}');
-
+        router(request, pathname, response);
     } else {
         // 页面
         console.log(filepath);
@@ -26,4 +25,6 @@ http.createServer(function (request, response) {
             }
         });
     }
-}).listen(8080);
+}).listen(8088);
+
+console.log('项目访问：http://localhost:8088/index.html');
