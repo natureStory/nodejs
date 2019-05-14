@@ -13,32 +13,19 @@
 <nav class="navbar navbar-default navbar-fixed-top navbar-orange" style="background-image: linear-gradient(160deg, #b100ff 20%,#00b3ff 80%);">
     <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu" aria-expanded="false">
-                <i class="fa fa-bars"></i>
-            </button>
-            <a class="navbar-brand"><img src="https://d33wubrfki0l68.cloudfront.net/67a4995f0d6ce4e69f8ca496de0ee0d2832e9385/29a04/assets/img/logo_rocket.png" height="35" alt="Propulso"><img src="https://d33wubrfki0l68.cloudfront.net/ae259063c171baba491308b7cb6ceacef91db0bd/6df5c/assets/img/logo_name.png" class="hidden-sm" height="30" alt="Propulso"></a>
+            <a class="navbar-brand">task notebook</a>
         </div>
-        <div class="collapse navbar-collapse" id="main-menu">
-            <ul class="nav navbar-nav">
-                <li><a href="#" onclick="goTo('#features'); ga('send', 'event', 'Menu', 'click', 'Features');">Features</a></li>
-                <li><a href="#" onclick="goTo('#price'); ga('send', 'event', 'Menu', 'click', 'Price');">Pricing</a></li>
-                <li class="hidden-sm"><a href="/en/faq">FAQ</a></li>
-                <li><a href="#" onclick="goTo('#footer'); ga('send', 'event', 'Menu', 'click', 'Contact');">Contact</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="/fr"><i class="fa fa-globe"></i> FR</a></li>
-                <li><a href="https://app.propulso.io"><i class="fa fa-lock"></i> Log In</a></li>
-                <li><a data-toggle="modal" data-target="#modal-subscription" class="btn-menu" onclick="ga('send', 'event', 'Subscribe', 'click', 'Top menu');">Sign Up</a></li>
-            </ul>
-        </div>
+        <div class="navbar-author-right">github home page—— <a href="https://github.com/natureStory">https://github.com/natureStory</a></div>
     </div>
 </nav>
 
 <div class="form-group" style="margin: 50px; margin-bottom: 0;">
     <label for="addtodolist">键入新的代办事项：</label>
-    <input type="email" class="form-control" id="addtodolist" placeholder="add new todolist">
+    <input type="email" class="form-control" id="addtodolist" placeholder="add new task">
 </div>
-
+<div class="delete-all" id="delete-all" title="清空所有task">
+    <img src="./assets/delete_all.png" title="清空所有task">
+</div>
 <div class="content" id="content">
 
 </div>
@@ -59,10 +46,18 @@
         fetch('/api/list?name='+name, {method: 'GET'})
             .then(data => data.json())
             .then(data => {
-                console.log(data);
-                let template = '<div>你好</div>';
+                let template = '';
                 data.forEach(item => {
-                    template += `<div>你好</div>`;
+                    template += `
+                        <div data-id="${item._id}" class="todo-item ${item.status === 1 ? '' : 'complete'}" title="${item.status === 1 ? '点击快速完成此条task哦~' : ''}">
+                            <img src="./assets/${item.status === 1 ? 'keeping.png' : 'complete.png'}">
+                            <div class="createTime">${item.createTime}</div>
+                            <div class="content-text">${item.content}</div>
+                            <div class="delete-todos" title="删除当前task">
+                                 <img src="./assets/delete.png">
+                            </div>
+                        </div>
+                    `;
                 });
                 document.getElementById('content').innerHTML = template;
             })
@@ -86,6 +81,48 @@
                     })
                     .catch(e => console.log(e));
             }
+        })
+    })();
+    // 更新事件绑定
+    (function() {
+        function hasClass(elem, cls) {
+            cls = cls || '';
+            if (cls.replace(/\s/g, '').length == 0) return false; //当cls没有参数时，返回false
+            return new RegExp(' ' + cls + ' ').test(' ' + elem.className + ' ');
+        }
+        document.getElementById('content').addEventListener('click', function (e) {
+            if (hasClass(e.target, 'delete-todos') || hasClass(e.target.parentElement, 'delete-todos')) {   // 删除todo
+                fetch('/api/todo', {method: 'DELETE', body: JSON.stringify({id: e.target.parentElement.dataset.id || e.target.parentElement.parentElement.dataset.id})})
+                    .then(data => data.json())
+                    .then(data => {
+                        getList();
+                    }).catch(e => console.log(e));
+            } else {    // 更新todo
+                let target = null;
+                if (hasClass(e.target, 'todo-item')) {
+                    target = e.target;
+                } else {
+                    target = e.target.parentElement;
+                }
+                if (hasClass(target, 'complete')) { // 已经完成，无需更新
+                    return;
+                }
+                fetch('/api/todo', {method: 'PUT', body: JSON.stringify({id: target.dataset.id})})
+                    .then(data => data.json())
+                    .then(data => {
+                        getList();
+                    }).catch(e => console.log(e));
+            }
+        })
+    })();
+    // 删除所有事件
+    (function() {
+        document.getElementById('delete-all').addEventListener('click', function () {
+            fetch('/api/list', {method: 'DELETE', body: JSON.stringify({name: localStorage.getItem('name')})})
+                .then(data => data.json())
+                .then(data => {
+                    document.getElementById('content').innerHTML = '';
+                }).catch(e => console.log(e));
         })
     })();
     getList();
