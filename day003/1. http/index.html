@@ -59,6 +59,7 @@
                         </div>
                     `;
                 });
+                !template && (template = '<p>空空如也，今天需要做什么呢~</p>');
                 document.getElementById('content').innerHTML = template;
             })
             .catch(e => console.log(e));
@@ -121,7 +122,7 @@
             fetch('/api/list', {method: 'DELETE', body: JSON.stringify({name: localStorage.getItem('name')})})
                 .then(data => data.json())
                 .then(data => {
-                    document.getElementById('content').innerHTML = '';
+                    document.getElementById('content').innerHTML = '<p>空空如也，今天需要做什么呢~</p>';
                 }).catch(e => console.log(e));
         })
     })();
